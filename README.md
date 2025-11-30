@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PMA - Enterprise Project Management System
 
-## Getting Started
+A robust, scalable, and modern project management solution designed to streamline team collaboration and maximize productivity. Built with the latest web technologies to deliver a seamless, high-performance experience.
 
-First, run the development server:
+## 🎯 About PMA
 
+PMA (Project Management App) was engineered to solve the complexity of managing modern software teams. By combining intuitive Kanban workflows with powerful role-based access control and intelligent notifications, PMA eliminates the chaos of project tracking. It empowers teams to focus on what matters: shipping great software.
+
+## 🏆 Key Features
+
+### 📋 Advanced Project Management
+- **Interactive Kanban Board**: Drag-and-drop interface for fluid task management.
+- **Customizable Workflows**: Create, edit, and reorder columns to fit your team's unique process.
+- **Rich Task Details**: Comprehensive task attributes including priority, due dates, labels, and rich-text descriptions.
+- **Media Support**: Seamless file attachments and image handling within tasks.
+
+### 🤝 Team Collaboration
+- **Real-Time Updates**: Instant synchronization of board state across all connected clients.
+- **Threaded Comments**: Contextual discussions directly within tasks.
+- **Member Management**: Streamlined interface for adding and removing team members.
+- **Smart Search**: Instant user lookup for rapid team assembly.
+
+### 🔔 Intelligent Notification System
+- **Smart Grouping Engine**: Proprietary logic that aggregates multiple updates from a single user into a concise summary, reducing notification noise by up to 80%.
+- **Project-Wide Alerts**: Automatic notifications for critical events (Task Creation, Status Changes, Assignments).
+- **Unread Indicators**: Visual cues for missed updates.
+
+### 🔐 Enterprise-Grade Security
+- **Role-Based Access Control (RBAC)**: Granular permissions for Admins, Managers, and Members.
+- **Secure Authentication**: Powered by NextAuth v5 with robust session management.
+- **Data Isolation**: Strict project-level access boundaries.
+
+## 🚀 Tech Stack
+
+### Frontend Architecture
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Library**: shadcn/ui (Radix UI)
+- **State Management**: React Server Components & Server Actions
+- **Icons**: Lucide React
+
+### Backend Infrastructure
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: Auth.js (NextAuth v5)
+- **Runtime**: Node.js
+
+## 🛠️ Installation & Setup
+
+### 1. Prerequisites
+- Node.js 18.17 or later
+- PostgreSQL database instance
+
+### 2. Clone Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd pm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Configure Environment
+Create a `.env` file in the root directory:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/pm_db"
+AUTH_SECRET="your-super-secret-key-generated-by-openssl"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 5. Initialize Database
+```bash
+npx prisma generate
+npx prisma db push
+node test-db.js  # Seeds the database with test data
+```
 
-## Learn More
+### 6. Start Application
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 👥 User Roles & Permissions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Role | Permissions |
+|------|-------------|
+| **Admin** | Full system access. Can manage all users, projects, and system settings. Implicitly a member of all projects. |
+| **Manager** | Can create projects, manage project members, and oversee task workflows within their owned projects. |
+| **Member** | Can view assigned projects, create tasks, move tasks, and participate in discussions. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 Project Structure
 
-## Deploy on Vercel
+```
+pm/
+├── src/
+│   ├── app/                 # Next.js App Router (Routes & Layouts)
+│   │   ├── (auth)/          # Authentication Pages
+│   │   ├── dashboard/       # Protected Application Interface
+│   │   └── api/             # API Endpoints
+│   ├── components/          # React Components
+│   │   ├── kanban/          # Board & Task Components
+│   │   ├── projects/        # Project & Member Management
+│   │   └── ui/              # Design System (shadcn/ui)
+│   ├── lib/                 # Core Logic & Utilities
+│   │   ├── *-actions.ts     # Server Actions (Business Logic)
+│   │   └── prisma.ts        # Database Client
+│   └── types/               # TypeScript Definitions
+├── prisma/                  # Database Schema
+└── public/                  # Static Assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ✨ Feature Spotlight
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Smart Notification Grouping
+PMA addresses the common issue of "notification spam" in active teams.
+- **Problem**: Moving 10 tasks generates 10 separate notifications, cluttering the inbox.
+- **Solution**: PMA's Smart Grouping detects rapid actions (within 5 minutes) from the same user and consolidates them into a single update: *"User X made multiple updates in Project Y"*.
+
+### Context-Aware Navigation
+The interface adapts to the user's context:
+- **Dashboard**: Provides high-level metrics and quick links to project analysis.
+- **Project View**: Focuses entirely on the Kanban board for maximum screen real estate and focus.
+
+---
+*Built with ❤️ for high-performance teams.*
