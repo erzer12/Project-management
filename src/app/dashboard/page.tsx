@@ -1,16 +1,9 @@
 import { auth } from "@/auth"
-import { getProjects } from "@/lib/project-actions"
+import { getProjects, getDashboardStats } from "@/lib/project-actions"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProjectList } from "@/components/projects/project-list"
 import { Activity, CheckCircle2, Folder, Layers } from "lucide-react"
-import { Project, User, Task } from "@prisma/client"
-
-type ProjectWithDetails = Project & {
-    manager: User
-    members: User[]
-    tasks: Task[]
-}
 
 export default async function Page() {
     const session = await auth()
@@ -18,13 +11,12 @@ export default async function Page() {
         redirect('/login')
     }
 
-    const projects = await getProjects()
+    const [projects, stats] = await Promise.all([
+        getProjects(),
+        getDashboardStats()
+    ])
 
-    // Calculate analytics
-    const totalProjects = projects.length
-    const activeProjects = projects.filter((p: ProjectWithDetails) => p.status === 'ACTIVE').length
-    const totalTasks = projects.reduce((acc: number, p: ProjectWithDetails) => acc + p.tasks.length, 0)
-    const completedTasks = projects.reduce((acc: number, p: ProjectWithDetails) => acc + p.tasks.filter((t: any) => t.status === 'DONE').length, 0)
+    const { totalProjects, activeProjects, totalTasks, completedTasks } = stats
 
     return (
         <div className="space-y-6">

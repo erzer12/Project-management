@@ -21,7 +21,7 @@ export async function getProjects() {
 
     if (role === Role.ADMIN) {
         return await prisma.project.findMany({
-            include: { manager: true, members: true, tasks: true },
+            include: { manager: true, members: true },
             orderBy: { updatedAt: 'desc' }
         })
     }
@@ -29,7 +29,7 @@ export async function getProjects() {
     if (role === Role.MANAGER) {
         return await prisma.project.findMany({
             where: { managerId: id },
-            include: { manager: true, members: true, tasks: true },
+            include: { manager: true, members: true },
             orderBy: { updatedAt: 'desc' }
         })
     }
@@ -37,9 +37,40 @@ export async function getProjects() {
     // MEMBER
     return await prisma.project.findMany({
         where: { members: { some: { id } } },
-        include: { manager: true, members: true, tasks: true },
+        include: { manager: true, members: true },
         orderBy: { updatedAt: 'desc' }
     })
+}
+
+export async function getDashboardStats() {
+    const session = await auth()
+    if (!session?.user) return { totalProjects: 0, activeProjects: 0, totalTasks: 0, completedTasks: 0 }
+
+    const { role, id } = session.user
+
+    let projectWhere = {}
+    if (role === Role.MANAGER) {
+        projectWhere = { managerId: id }
+    } else if (role === Role.MEMBER) {
+        projectWhere = { members: { some: { id } } }
+    }
+
+    const totalProjects = await prisma.project.count({ where: projectWhere })
+    const activeProjects = await prisma.project.count({ where: { ...projectWhere, status: ProjectStatus.ACTIVE } })
+
+    // For tasks, we need to count tasks in projects visible to the user
+    const totalTasks = await prisma.task.count({
+        where: { project: projectWhere }
+    })
+
+    const completedTasks = await prisma.task.count({
+        where: {
+            project: projectWhere,
+            status: 'DONE'
+        }
+    })
+
+    return { totalProjects, activeProjects, totalTasks, completedTasks }
 }
 
 export async function createProject(formData: FormData) {
