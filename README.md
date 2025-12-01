@@ -30,6 +30,40 @@ PMA (Project Management App) was engineered to solve the complexity of managing 
 - **Secure Authentication**: Powered by NextAuth v5 with robust session management.
 - **Data Isolation**: Strict project-level access boundaries.
 
+## 🚀 Deployment
+
+### Deploying to Vercel
+
+1.  **Push to GitHub:** Ensure your project is pushed to a GitHub repository.
+2.  **Import to Vercel:** Go to [Vercel](https://vercel.com), click "Add New...", and select "Project". Import your repository.
+3.  **Configure Project:**
+    *   **Framework Preset:** Next.js
+    *   **Root Directory:** `./`
+    *   **Build Command:** `npx prisma generate && next build` (Important!)
+    *   **Install Command:** `npm install`
+4.  **Environment Variables:** Add the following variables in the Vercel dashboard:
+    *   `DATABASE_URL`: **Transaction Pooler URL** (Port 6543).
+        *   Example: `postgresql://postgres.[ref]:[pass]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true`
+    *   `DIRECT_URL`: **Session URL** (Port 5432).
+        *   Example: `postgresql://postgres.[ref]:[pass]@aws-0-[region].pooler.supabase.com:5432/postgres`
+    *   `AUTH_SECRET`: A random 32-character string.
+    *   `AUTH_TRUST_HOST`: `true`
+5.  **Deploy:** Click "Deploy".
+
+### Database Setup (Production)
+
+Since Vercel is serverless, you need to push your database schema manually:
+
+1.  **Connect to Prod DB:** Temporarily set your local `.env` `DATABASE_URL` to your production database URL (or use a separate `.env.production`).
+2.  **Push Schema:**
+    ```bash
+    npx prisma db push
+    ```
+3.  **Seed Data (Optional):**
+    ```bash
+    node prisma/seed.js
+    ```
+
 ## 🚀 Tech Stack
 
 ### Frontend Architecture
