@@ -19,9 +19,17 @@ export async function getProjects() {
 
     const { role, id } = session.user
 
+    const include = {
+        manager: true,
+        members: true,
+        _count: {
+            select: { tasks: true }
+        }
+    }
+
     if (role === Role.ADMIN) {
         return await prisma.project.findMany({
-            include: { manager: true, members: true },
+            include,
             orderBy: { updatedAt: 'desc' }
         })
     }
@@ -29,7 +37,7 @@ export async function getProjects() {
     if (role === Role.MANAGER) {
         return await prisma.project.findMany({
             where: { managerId: id },
-            include: { manager: true, members: true },
+            include,
             orderBy: { updatedAt: 'desc' }
         })
     }
@@ -37,7 +45,7 @@ export async function getProjects() {
     // MEMBER
     return await prisma.project.findMany({
         where: { members: { some: { id } } },
-        include: { manager: true, members: true },
+        include,
         orderBy: { updatedAt: 'desc' }
     })
 }

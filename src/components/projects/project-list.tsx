@@ -14,10 +14,12 @@ import { Progress } from "@/components/ui/progress"
 type ProjectWithDetails = Project & {
     manager: User
     members: User[]
-    tasks: Task[]
+    _count: {
+        tasks: number
+    }
 }
 
-export function ProjectList({ projects, showSearch = true, variant = 'dashboard' }: { projects: ProjectWithDetails[], showSearch?: boolean, variant?: 'dashboard' | 'projects' }) {
+export function ProjectList({ projects, showSearch = true, variant = 'dashboard' }: { projects: any[], showSearch?: boolean, variant?: 'dashboard' | 'projects' }) {
     const [search, setSearch] = useState("")
 
     const filteredProjects = projects.filter(project =>
@@ -77,12 +79,12 @@ export function ProjectList({ projects, showSearch = true, variant = 'dashboard'
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-text-muted">Tasks</span>
-                                        <span className="font-medium text-text-primary">{project.tasks.length}</span>
+                                        <span className="font-medium text-text-primary">{project._count?.tasks || 0}</span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-text-muted">Members</span>
                                         <div className="flex -space-x-2 overflow-hidden">
-                                            {project.members.slice(0, 3).map((member) => (
+                                            {project.members.slice(0, 3).map((member: User) => (
                                                 <Avatar key={member.id} className="inline-block h-6 w-6 ring-2 ring-bg-surface">
                                                     <AvatarImage src={member.image || ""} />
                                                     <AvatarFallback>{member.name?.[0]}</AvatarFallback>
@@ -94,13 +96,6 @@ export function ProjectList({ projects, showSearch = true, variant = 'dashboard'
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="flex items-center justify-between text-xs text-text-muted">
-                                            <span>Progress</span>
-                                            <span>{Math.round((project.tasks.filter(t => t.status === 'DONE').length / (project.tasks.length || 1)) * 100)}%</span>
-                                        </div>
-                                        <Progress value={(project.tasks.filter(t => t.status === 'DONE').length / (project.tasks.length || 1)) * 100} className="h-1" />
                                     </div>
                                 </div>
                             </CardContent>
